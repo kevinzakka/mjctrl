@@ -55,7 +55,7 @@ def main() -> None:
     mocap_name = "target"
     mocap_id = model.body(mocap_name).mocapid[0]
 
-    # Reset the simulation to the initial joint ration.
+    # Reset the simulation.
     mujoco.mj_resetDataKeyframe(model, data, key_id)
 
     # Pre-allocate numpy arrays.
