@@ -1,6 +1,2 @@
-*.ipynb
-mjc/
-NOTES.md
 diffik_qpsolvers.py
 diffik_qp.py
-diffik_velocity.py
