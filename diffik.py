@@ -14,10 +14,6 @@ damping: float = 1e-4
 # Gains for the twist computation. These should be between 0 and 1. 0 means no
 # movement, 1 means move the end-effector to the target in one integration step.
 Kpos: float = 0.95
-
-# Gain for the orientation component of the twist computation. This should be
-# between 0 and 1. 0 means no movement, 1 means move the end-effector to the target
-# orientation in one integration step.
 Kori: float = 0.95
 
 # Whether to enable gravity compensation.
@@ -25,6 +21,9 @@ gravity_compensation: bool = True
 
 # Simulation timestep in seconds.
 dt: float = 0.002
+
+# Maximum joint velocity in rad/s.
+dq_max = 0.785
 
 
 def main() -> None:
@@ -112,6 +111,11 @@ def main() -> None:
 
             # Solve for joint velocities: J * dq = twist using damped least squares.
             dq = np.linalg.solve(jac.T @ jac + diag, jac.T @ twist)
+
+            # Clamp maximum joint velocity.
+            dq_abs_max = np.abs(dq).max()
+            if dq_abs_max > dq_max:
+                dq *= dq_max / dq_abs_max
 
             # Integrate joint velocities to obtain joint positions.
             q = data.qpos.copy()  # Note the copy here is important.
