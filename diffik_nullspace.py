@@ -25,8 +25,8 @@ dt: float = 0.002
 # Nullspace P gain.
 Kn = np.asarray([10.0, 10.0, 10.0, 10.0, 5.0, 5.0, 5.0])
 
-# Maximum joint velocity in rad/s.
-dq_max = 0.785
+# Maximum allowable joint velocity in rad/s.
+max_angvel = 0.785
 
 
 def main() -> None:
@@ -115,8 +115,8 @@ def main() -> None:
 
             # Clamp maximum joint velocity.
             dq_abs_max = np.abs(dq).max()
-            if dq_abs_max > dq_max:
-                dq *= dq_max / dq_abs_max
+            if dq_abs_max > max_angvel:
+                dq *= max_angvel / dq_abs_max
 
             # Integrate joint velocities to obtain joint positions.
             q = data.qpos.copy()  # Note the copy here is important.
