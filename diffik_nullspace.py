@@ -70,7 +70,7 @@ def main() -> None:
 
     # Pre-allocate numpy arrays.
     jac = np.zeros((6, model.nv))
-    diag = damping * np.eye(model.nv)
+    diag = damping * np.eye(6)
     eye = np.eye(model.nv)
     twist = np.zeros(6)
     site_quat = np.zeros(4)
@@ -108,7 +108,7 @@ def main() -> None:
             mujoco.mj_jacSite(model, data, jac[:3], jac[3:], site_id)
 
             # Damped least squares.
-            dq = np.linalg.solve(jac.T @ jac + diag, jac.T @ twist)
+            dq = jac.T @ np.linalg.solve(jac @ jac.T + diag, twist)
 
             # Nullspace control biasing joint velocities towards the home configuration.
             dq += (eye - np.linalg.pinv(jac) @ jac) @ (Kn * (q0 - data.qpos[dof_ids]))
