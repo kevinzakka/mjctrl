@@ -69,7 +69,7 @@ def main() -> None:
 
     # Pre-allocate numpy arrays.
     jac = np.zeros((6, model.nv))
-    diag = damping * np.eye(model.nv)
+    diag = damping * np.eye(6)
     error = np.zeros(6)
     error_pos = error[:3]
     error_ori = error[3:]
@@ -116,7 +116,7 @@ def main() -> None:
             mujoco.mj_jacSite(model, data, jac[:3], jac[3:], site_id)
 
             # Solve system of equations: J @ dq = error.
-            dq = np.linalg.solve(jac.T @ jac + diag, jac.T @ error)
+            dq = jac.T @ np.linalg.solve(jac @ jac.T + diag, error)
 
             # Scale down joint velocities if they exceed maximum.
             if max_angvel > 0:
